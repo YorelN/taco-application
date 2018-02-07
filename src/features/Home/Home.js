@@ -24,7 +24,7 @@ class Home extends Component {
     render() {
         const { message } = this.props;
         return (
-            <div>{ message || this.state.message }</div>
+            <div className="adiv">{ message || this.state.message }</div>
         )
     }
 }

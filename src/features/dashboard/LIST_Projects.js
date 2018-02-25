@@ -11,10 +11,6 @@ const { Meta } = Card;
 
 class LIST_Projects extends Component {
 
-    static defaultProps = {
-        projects: []
-    };
-
     componentDidMount() {
         const { listProjects } = this.props;
 

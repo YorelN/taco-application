@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import {Redirect, Route, Switch} from "react-router-dom";
 import Layout from "./common/Layout";
-import './App.css'
+import './App.scss'
+
 
 // const isLoggedInComponent = connect(state => ({
 //   isLoggedIn: state.auth.isLoggedIn

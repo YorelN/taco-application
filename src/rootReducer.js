@@ -1,8 +1,10 @@
-import { combineReducers } from 'redux';
-import home from './features/Home/homeReducers';
+import {combineReducers} from "redux";
+
+import dashboard from './features/dashboard/reducers/dashboardReducers'
 
 const rootReducer = combineReducers({
-    home : home
+    dashboard,
 });
+
 
 export default rootReducer;

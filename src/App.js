@@ -1,11 +1,40 @@
-import React, { Component } from 'react';
-import Home from "./features/Home/Home";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import {Redirect, Route, Switch} from "react-router-dom";
+import Layout from "./common/Layout";
+import './App.css'
+
+// const isLoggedInComponent = connect(state => ({
+//   isLoggedIn: state.auth.isLoggedIn
+// }));
+//
+// const PrivateRoute = isLoggedInComponent(
+//   ({ component: Component, ...rest }) => (
+//     <Route
+//       {...rest}
+//       render={props =>
+//         rest.isLoggedIn ? (
+//           <Component {...props} />
+//         ) : (
+//           <Redirect
+//             to={{
+//               pathname: "/home",
+//               state: { from: props.location }
+//             }}
+//           />
+//         )
+//       }
+//     />
+//   )
+// );
 
 class App extends Component {
   render() {
     return (
-      <Home/>
-    );
+        <Switch className="App">
+          <Route path="/" component={Layout}/>
+        </Switch>
+    )
   }
 }
 

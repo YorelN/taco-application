@@ -44,7 +44,7 @@ module.exports = {
         {
             test: /\.scss$/,
             exclude: /node_modules/,
-            use: ['style-loader', 'css-loader', 'sass-loader']
+            use: ['style-loader', 'css-loader', 'dart-sass-loader']
         },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
@@ -57,9 +57,10 @@ module.exports = {
   },
   plugins: webpackPlugins,
   devServer: {
+    host: "0.0.0.0",
     historyApiFallback: true,
     contentBase: './build',
-    port: process.env.PORT || 9000,
+    port: process.env.PORT || 3000,
     proxy: {
       "/api": {
         "target": "http://taco_api",
@@ -68,7 +69,6 @@ module.exports = {
         }
       }
     },
-    open: true,
     disableHostCheck: hostCheck
   }
 };

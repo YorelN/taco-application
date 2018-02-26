@@ -7,7 +7,6 @@ import {Provider} from "react-redux";
 import { createStore, compose, applyMiddleware } from "redux";
 import ReduxPromise from "redux-promise";
 import ReduxThunk from "redux-thunk";
-
 import reducers from "./rootReducer";
 
 const store = createStore(
@@ -25,4 +24,3 @@ const app = (
 );
 
 render(app, document.getElementById("root"));
-registerServiceWorker();

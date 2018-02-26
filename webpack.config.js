@@ -41,6 +41,11 @@ module.exports = {
           presets: ['es2015', 'react']
         }
       },
+        {
+            test: /\.scss$/,
+            exclude: /node_modules/,
+            use: ['style-loader', 'css-loader', 'sass-loader']
+        },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
         use: [
@@ -52,6 +57,7 @@ module.exports = {
   },
   plugins: webpackPlugins,
   devServer: {
+    historyApiFallback: true,
     contentBase: './build',
     port: process.env.PORT || 9000,
     proxy: {

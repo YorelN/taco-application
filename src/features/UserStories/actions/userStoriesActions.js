@@ -1,17 +1,14 @@
 import axios from "axios";
-import { ADD_USER_STORY, LIST_USER_STORIES } from "./actionTypes";
-
+import {ADD_USER_STORY, DETAILS_USER_STORY, LIST_USER_STORIES} from "./actionTypes";
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:80',
+  baseURL: "http://localhost:80"
 });
-
 
 export function listUserStories() {
   return async function(dispatch) {
-    const URL = `/boards/1/tasks`;
-    const { data: tasks, status } = await apiClient(URL, {
-    });
+    const URL = `/api/boards/1/tasks`;
+    const { data: tasks, status } = await axios.get(URL, {});
     dispatch({
       type: LIST_USER_STORIES,
       payload: tasks
@@ -21,15 +18,11 @@ export function listUserStories() {
   };
 }
 
-export function addUserStories() {
+export function addUserStories(newUserStory) {
   return async function(dispatch) {
     const URL = `/api/boards/${1}/tasks`;
-    const METHOD = "POST";
 
-    const { data: tasks, status } = await axios({
-      URL,
-      METHOD
-    });
+    const { data: tasks, status } = await axios.post(URL, newUserStory);
     dispatch({
       type: ADD_USER_STORY,
       payload: tasks
@@ -37,4 +30,18 @@ export function addUserStories() {
 
     return status;
   };
+}
+
+export function detailsUserStory(taskId) {
+    return async function(dispatch) {
+        const URL = `/api/boards/${1}/tasks/${taskId}`;
+
+        const { data: detailedTask, status } = await axios.get(URL);
+        dispatch({
+            type: DETAILS_USER_STORY,
+            payload: detailedTask
+        });
+
+        return status;
+    };
 }

@@ -1,4 +1,8 @@
-import { LIST_USER_STORIES, ADD_USER_STORY } from "../actions/actionTypes";
+import {
+  LIST_USER_STORIES,
+  ADD_USER_STORY,
+  DETAILS_USER_STORY
+} from "../actions/actionTypes";
 
 import userStoriesInitialState from "./initialState";
 
@@ -7,13 +11,19 @@ export default function(state = userStoriesInitialState, action = {}) {
     case LIST_USER_STORIES:
       const tasks = action.payload;
       return Object.assign({}, state, {
-        projects: tasks
+        userStories: tasks
       });
 
     case ADD_USER_STORY:
       const newTask = action.payload;
       return Object.assign({}, state, {
-        projects: newTask
+        userStory: newTask
+      });
+
+    case DETAILS_USER_STORY:
+      const detailedTask = action.payload;
+      return Object.assign({}, state, {
+        userStory: detailedTask
       });
     default:
       return state;

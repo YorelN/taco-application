@@ -3,9 +3,10 @@ import { Layout, Menu, Icon } from 'antd';
 import {listProjects} from "../features/dashboard/actions/dashboardActions";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {Link, Route, withRouter} from "react-router-dom";
+import {Link, Route, Switch, withRouter} from "react-router-dom";
 import LIST_Projects from "../features/dashboard/LIST_Projects";
 import LIST_UserStories from "../features/UserStories/LIST_UserStories";
+import DETAILS_UserStories from "../features/SubTasks/DETAILS_UserStory";
 const { Header, Content, Sider } = Layout;
 
 const style = {
@@ -62,7 +63,10 @@ class DashboardLayout extends Component {
                     <Layout style={{ padding: '24px 24px' }}>
                         <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
                             <Route path="/projects" component={LIST_Projects}/>
-                            <Route path="/user-stories" component={LIST_UserStories}/>
+                            <Switch>
+                                <Route path="/user-stories" component={LIST_UserStories}/>
+                                <Route path="/user-story/:userStoryId" component={DETAILS_UserStories}/>
+                            </Switch>
                         </Content>
                     </Layout>
                 </Layout>

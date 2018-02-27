@@ -9,10 +9,7 @@ export function PageHeader({title, actionButton}) {
                     actionButton
                 ]}
             >
-                <List.Item.Meta
-                    style={{fontSize: '42px !important'}}
-                    title={title}
-                />
+                <h2 style={{margin: 0, fontSize: '2rem'}}>{title}</h2>
             </List.Item>
             <Divider/>
         </div>

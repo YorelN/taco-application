@@ -1,63 +1,195 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import {List} from "antd";
-import {detailsUserStory} from "../UserStories/actions/userStoriesActions";
+import { listSubTasks, addSubTask } from "../SubTasks/actions/subTasksActions";
+import { PageHeader } from "../../components/PageHeader";
+import { Icon, Button, Modal, Form, Input, List } from "antd";
+const FormItem = Form.Item;
+const { TextArea } = Input;
 
 class DETAILS_UserStory extends Component {
+  state = {
+    addSubtasksPickerVisible: false,
+    form: {
+      title: "",
+      description: ""
+    }
+  };
+
   componentDidMount() {
-      const { detailsUserStory, match } = this.props;
-      const { userStoryId } = match.params;
-      console.log(match, userStoryId);
-      detailsUserStory(userStoryId)
+    const { listSubTasks, match } = this.props;
+    const { userStoryId } = match.params;
+    listSubTasks(userStoryId);
   }
 
-  renderAddSubTasksPicker() {
-    const { addSubTasksPickerVisible } = this.state;
+  updateForm = event => {
+    const { value, name } = event.target;
+    this.setState((state, props) => {
+      return {
+        form: {
+          ...state.form,
+          [name]: value
+        }
+      };
+    });
+  };
+
+  showAddSubtasksPicker = () => {
+    this.setState({
+      addSubtasksPickerVisible: true
+    });
+  };
+
+  hideAddSubtasksPicker = () => {
+    this.setState({
+      addSubtasksPickerVisible: false
+    });
+  };
+
+  addSubTasks = () => {
+    const { addSubTask, listSubTasks, match } = this.props;
+    const { userStoryId } = match.params;
+    const { form: newSubTasks } = this.state;
+    const { status } = addSubTask(userStoryId, newSubTasks);
+
+    if (status === 200) {
+      listSubTasks(userStoryId);
+      this.hideAddSubtasksPicker();
+    }
+  };
+
+  renderAddSubtasksPicker() {
+    const { addSubtasksPickerVisible, form: subTask } = this.state;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 }
+      }
+    };
     return (
       <Modal
-        title="Basic Modal"
-        visible={addSubTasksPickerVisible}
-        onOk={this.addUserStory}
-        onCancel={this.hideAddUserStoryPicker}
-      />
+        title="Ajouter une sous-tâche"
+        visible={addSubtasksPickerVisible}
+        onOk={this.addSubTasks}
+        onCancel={this.hideAddSubtasksPicker}
+      >
+        <FormItem {...formItemLayout} label="Titre">
+          <Input
+            value={subTask.title}
+            name="title"
+            onChange={e => this.updateForm(e)}
+          />
+        </FormItem>
+        <FormItem {...formItemLayout} label="Description">
+          <TextArea
+            autosize
+            value={subTask.description}
+            name="description"
+            onChange={e => this.updateForm(e)}
+          />
+        </FormItem>
+      </Modal>
     );
   }
-  showAddSubTasksPicker = () => {
-    this.setState({
-      addSubTasksPickerVisible: true
-    });
-  };
-
-  hideAddSubTasksPicker = () => {
-    this.setState({
-      addSubTasksPickerVisible: false
-    });
-  };
-
-  render() {
-      const { userStory } = this.props;
+  renderDeleteUserStoryPicker() {
+    const {
+      deleteUserStoryPickerVisible,
+      currentUserStory: userStory
+    } = this.state;
     return (
-      <List
-        size="large"
-        header={<div>Header</div>}
-        footer={<div>Footer</div>}
-        bordered
-        dataSource={userStory}
-        renderItem={item => <List.Item>{item}</List.Item>}
-      />
+      <Modal
+        title="Supprimer une sous-tâche"
+        visible={deleteUserStoryPickerVisible}
+        onOk={this.deleteUserStory}
+        onCancel={this.hideDeleteUserStoryPicker}
+      >
+        <p>
+          Êtes-vous sûr de vouloir supprimer la sous-tâche{" "}
+          <span style={{ fontWeight: 800 }}>{userStory.title}</span> ?{" "}
+        </p>
+      </Modal>
+    );
+  }
+  render() {
+    const { subTasks } = this.props;
+    return (
+      <div>
+        <PageHeader
+          title={subTasks.title}
+          actionButton={
+            <div>
+              <Button
+                type="primary"
+                ghost
+                onClick={this.showAddUserStoryPicker}
+              >
+                <Icon type="edit" />
+                Modifier
+              </Button>
+            </div>
+          }
+        />
+        <List
+          size="large"
+          header={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Button type="primary" ghost onClick={this.showAddSubtasksPicker}>
+                <Icon type="file-add" />
+                Ajouter une sous-tâche
+              </Button>
+            </div>
+          }
+          bordered
+          dataSource={subTasks}
+          renderItem={subTask => (
+            <List.Item
+              key={subTask._id}
+              style={{ borderBottom: "1px solid lightgray" }}
+            >
+              <List.Item.Meta
+                title={subTask.title}
+                description={subTask.description}
+              />
+              <div>
+                <div >
+                  <Button>
+                    <Icon type="eye" style={{color: '#5726FB'}}/>
+                  </Button>{' '}
+                  <Button >
+                    <Icon type="edit" style={{color: '#fba672'}}/>
+                  </Button>{' '}
+                  <Button style={{color: 'red'}}>
+                    <Icon type="delete" />
+                  </Button>
+                </div>
+              </div>
+            </List.Item>
+          )}
+        />
+        {this.renderAddSubtasksPicker()}
+      </div>
     );
   }
 }
 
 function mapStateToProps(state) {
   return {
-    userStory: state.userStory.userStory
+    subTasks: state.subTask.subTasks
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ detailsUserStory }, dispatch);
+  return bindActionCreators({ listSubTasks, addSubTask }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DETAILS_UserStory);

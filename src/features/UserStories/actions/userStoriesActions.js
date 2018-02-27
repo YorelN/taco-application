@@ -1,5 +1,5 @@
 import axios from "axios";
-import {ADD_USER_STORY, DETAILS_USER_STORY, LIST_USER_STORIES} from "./actionTypes";
+import {ADD_USER_STORY, DELETE_USER_STORY, UPDATE_USER_STORY, LIST_USER_STORIES} from "./actionTypes";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:80"
@@ -32,14 +32,14 @@ export function addUserStory(newUserStory) {
   };
 }
 
-export function detailsUserStory(taskId) {
+export function updateUserStory(taskId, editedTask) {
     return async function(dispatch) {
         const URL = `/api/boards/${1}/tasks/${taskId}`;
 
-        const { data: detailedTask, status } = await axios.get(URL);
+        const { data: updatedTask, status } = await axios.put(URL, editedTask);
         dispatch({
-            type: DETAILS_USER_STORY,
-            payload: detailedTask
+            type: UPDATE_USER_STORY,
+            payload: updatedTask
         });
 
         return status;
@@ -53,7 +53,7 @@ export function deleteUserStory(taskId) {
 
         const { data: detailedTask, status } = await axios.delete(URL);
         dispatch({
-            type: DETAILS_USER_STORY,
+            type: DELETE_USER_STORY,
             payload: detailedTask
         });
 

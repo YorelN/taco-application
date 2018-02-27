@@ -1,39 +1,34 @@
 import React, { Component } from "react";
+import axios from "axios";
 import {
   Card,
   Icon,
   Avatar,
   Button,
-  Row,
-  Col,
   Modal,
   Form,
   Input,
-  Menu,
   List,
-  Spin,
-  Dropdown,
-  Divider
+  Spin
 } from "antd";
 import { listProjects } from "../../features/dashboard/actions/dashboardActions";
-const { confirm } = Modal;
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Link, Route, withRouter } from "react-router-dom";
 import { PageHeader } from "../../components/PageHeader";
 import {
-  addUserStory,
-  deleteUserStory,
-  listUserStories
+    addUserStory,
+    deleteUserStory,
+    listUserStories, updateUserStory
 } from "./actions/userStoriesActions";
 const FormItem = Form.Item;
-const { Meta } = Card;
 const { TextArea } = Input;
 
 class LIST_Projects extends Component {
   state = {
     addUserStoryPickerVisible: false,
     deleteUserStoryPickerVisible: false,
+    updateUserStoryPickerVisible: false,
+    editMode: false,
     form: {
       title: "",
       description: "",
@@ -61,16 +56,28 @@ class LIST_Projects extends Component {
     });
   };
 
-  getCurrentUserStory = currentUserStory => () => {
-    this.setState({ currentUserStory: currentUserStory });
+  redirectToDetailedUserStory = userStoryId => () => {
+    const { history } = this.props;
+
+    history.push(`/user-story/${userStoryId}`);
   };
 
   addUserStory = () => {
-    const { listUserStories,  addUserStory } = this.props;
+    const { listUserStories, addUserStory } = this.props;
     const { form: newUserStory } = this.state;
 
-     addUserStory(newUserStory).then(response => {
+    addUserStory(newUserStory).then(response => {
       this.hideAddUserStoryPicker();
+      listUserStories();
+    });
+  };
+
+  updateUserStory = () => {
+    const { listUserStories, updateUserStory } = this.props;
+    const { form: updatedUserStory } = this.state;
+
+    updateUserStory(updatedUserStory._id, updatedUserStory).then(response => {
+      this.hideUpdateUserStoryPicker();
       listUserStories();
     });
   };
@@ -84,10 +91,19 @@ class LIST_Projects extends Component {
     });
   };
 
+  setEditMode = userStoryId => () => {
+    axios.get(`/api/boards/1/tasks/${userStoryId}`).then(({ data }) => {
+      this.setState({
+        form: data,
+        updateUserStoryPickerVisible: true
+      });
+    });
+  };
+
   render() {
     const { userStories } = this.props;
 
-    console.log(this.state);
+    console.log(this.state.form._id);
     if (!userStories) return <Spin className="demo-loading" />;
 
     return (
@@ -100,25 +116,37 @@ class LIST_Projects extends Component {
             </Button>
           }
         />
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", padding: 5, margin: 5 }}>
           <List
             dataSource={userStories}
             renderItem={userStory => (
               <div>
-                <List.Item key={userStory._id}>
+                <List.Item
+                  key={userStory._id}
+                  style={{ borderBottom: "1px solid lightgray" }}
+                >
                   <List.Item.Meta
                     avatar={<Avatar>{userStory.points}</Avatar>}
                     title={userStory.title}
                     description={userStory.description}
                   />
-                  <Button onClick={this.showDeleteUserStoryPicker(userStory)}>
-                    <Icon type="delete" /> Supprimer
-                  </Button>
-                  <Button >
-                    <Icon type="eye" /> Details
-                  </Button>
+                  <div>
+                    <Button
+                      onClick={this.redirectToDetailedUserStory(userStory._id)}
+                    >
+                      <Icon type="eye" style={{ color: "#5726FB" }} />
+                    </Button>{" "}
+                    <Button onClick={this.setEditMode(userStory._id)}>
+                      <Icon type="edit" style={{ color: "#fba672" }} />
+                    </Button>{" "}
+                    <Button
+                      onClick={this.showDeleteUserStoryPicker(userStory)}
+                      style={{ color: "red" }}
+                    >
+                      <Icon type="delete" />
+                    </Button>
+                  </div>
                 </List.Item>
-                <Divider />
               </div>
             )}
           >
@@ -127,6 +155,7 @@ class LIST_Projects extends Component {
           {this.renderDeleteUserStoryPicker()}
         </div>
         {this.renderAddUserStoryPicker()}
+        {this.renderUpdateUserStoryPicker()}
       </div>
     );
   }
@@ -176,7 +205,6 @@ class LIST_Projects extends Component {
       </Modal>
     );
   }
-
   showAddUserStoryPicker = () => {
     this.setState({
       addUserStoryPickerVisible: true
@@ -188,9 +216,62 @@ class LIST_Projects extends Component {
       addUserStoryPickerVisible: false
     });
   };
+  renderUpdateUserStoryPicker() {
+    const { updateUserStoryPickerVisible, form: userStory } = this.state;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 }
+      }
+    };
+    return (
+      <Modal
+        title="Modifer une user-story"
+        visible={updateUserStoryPickerVisible}
+        onOk={this.updateUserStory}
+        onCancel={this.hideUpdateUserStoryPicker}
+      >
+        <FormItem {...formItemLayout} label="Titre">
+          <Input
+            value={userStory.title}
+            name="title"
+            onChange={e => this.updateForm(e)}
+          />
+        </FormItem>
+        <FormItem {...formItemLayout} label="Description">
+          <TextArea
+            autosize
+            value={userStory.description}
+            name="description"
+            onChange={e => this.updateForm(e)}
+          />
+        </FormItem>
+        <FormItem {...formItemLayout} label="Points">
+          <Input
+            type="number"
+            value={userStory.points}
+            name="points"
+            onChange={e => this.updateForm(e)}
+          />
+        </FormItem>
+      </Modal>
+    );
+  }
+  hideUpdateUserStoryPicker = () => {
+    this.setState({
+      updateUserStoryPickerVisible: false
+    });
+  };
 
   renderDeleteUserStoryPicker() {
-    const { deleteUserStoryPickerVisible } = this.state;
+    const {
+      deleteUserStoryPickerVisible,
+      currentUserStory: userStory
+    } = this.state;
     return (
       <Modal
         title="Supprimer une user-story"
@@ -198,7 +279,10 @@ class LIST_Projects extends Component {
         onOk={this.deleteUserStory}
         onCancel={this.hideDeleteUserStoryPicker}
       >
-        <p>Êtes-vous sûr de vouloir supprimer cette tâche ?</p>
+        <p>
+          Êtes-vous sûr de vouloir supprimer la tâche{" "}
+          <span style={{ fontWeight: 800 }}>{userStory.title}</span> ?{" "}
+        </p>
       </Modal>
     );
   }
@@ -224,7 +308,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ listUserStories, deleteUserStory, addUserStory }, dispatch);
+  return bindActionCreators(
+    { listUserStories, deleteUserStory, addUserStory, updateUserStory },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LIST_Projects);

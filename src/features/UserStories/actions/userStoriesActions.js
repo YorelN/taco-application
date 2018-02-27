@@ -62,16 +62,3 @@ export function deleteUserStory(taskId) {
 }
 
 
-export function deleteUserStory(taskId) {
-    return async function(dispatch) {
-        const URL = `/api/boards/${1}/tasks/${taskId}`;
-
-        const { data: detailedTask, status } = await axios.delete(URL);
-        dispatch({
-            type: DETAILS_USER_STORY,
-            payload: detailedTask
-        });
-
-        return status;
-    };
-}

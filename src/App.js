@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import {Redirect, Route, Switch} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import Layout from "./common/Layout";
-import './App.scss'
+import './styles/App.scss'
 
 
 // const isLoggedInComponent = connect(state => ({

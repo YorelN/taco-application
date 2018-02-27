@@ -1,16 +1,21 @@
-import { LIST_PROJECTS } from '../actions/actionTypes';
+import { LIST_USER_STORIES, ADD_USER_STORY } from "../actions/actionTypes";
 
-import dashboardInitialState from './initialState';
+import userStoriesInitialState from "./initialState";
 
-export default function(state = dashboardInitialState, action = {}) {
-    switch (action.type) {
-        case LIST_PROJECTS:
-            const projects = action.payload;
-            return Object.assign({}, state, {
-                projects: projects,
-            });
+export default function(state = userStoriesInitialState, action = {}) {
+  switch (action.type) {
+    case LIST_USER_STORIES:
+      const tasks = action.payload;
+      return Object.assign({}, state, {
+        projects: tasks
+      });
 
-        default:
-            return state;
-    }
+    case ADD_USER_STORY:
+      const newTask = action.payload;
+      return Object.assign({}, state, {
+        projects: newTask
+      });
+    default:
+      return state;
+  }
 }

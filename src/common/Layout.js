@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Breadcrumb, Icon } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import {listProjects} from "../features/dashboard/actions/dashboardActions";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Link, Route, withRouter} from "react-router-dom";
 import LIST_Projects from "../features/dashboard/LIST_Projects";
 import LIST_UserStories from "../features/UserStories/LIST_UserStories";
-const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const style = {
@@ -16,7 +15,7 @@ const style = {
     sideBar: {
         height: `calc(100vh - 64px)`
     }
-}
+};
 
 class DashboardLayout extends Component {
 
@@ -47,13 +46,13 @@ class DashboardLayout extends Component {
                             style={style.sideBar}
                         >
                             <Menu.Item key="1">
-                                <Link to={`/dashboard`}>
+                                <Link to={`/projects`}>
                                     <Icon type="appstore" />
-                                    <span>Dashboard</span>
+                                    <span>Projets</span>
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="2">
-                                <Link to={`/user-story`}>
+                                <Link to={`/user-stories`}>
                                     <Icon type="folder" />
                                     <span>User stories</span>
                                 </Link>
@@ -62,8 +61,8 @@ class DashboardLayout extends Component {
                     </Sider>
                     <Layout style={{ padding: '24px 24px' }}>
                         <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
-                            <Route path="/dashboard" component={LIST_Projects}/>
-                            <Route path="/user-story" component={LIST_UserStories}/>
+                            <Route path="/projects" component={LIST_Projects}/>
+                            <Route path="/user-stories" component={LIST_UserStories}/>
                         </Content>
                     </Layout>
                 </Layout>

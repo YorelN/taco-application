@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {List, Divider, Button} from 'antd';
+import {List, Divider} from 'antd';
 
 export function PageHeader({title, actionButton}) {
     return (

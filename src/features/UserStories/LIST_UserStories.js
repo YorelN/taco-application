@@ -71,6 +71,15 @@ class LIST_Projects extends Component {
       listUserStories();
     });
   };
+  deleteUserStory = () => {
+    const { listUserStories, deleteUserStory } = this.props;
+    const { currentUserStory } = this.state;
+
+    deleteUserStory(currentUserStory._id).then(response => {
+      this.hideDeleteUserStoryPicker();
+      listUserStories();
+    });
+  };
 
   updateUserStory = () => {
     const { listUserStories, updateUserStory } = this.props;

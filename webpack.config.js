@@ -25,7 +25,7 @@ if (isProd) {
 }
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: ["babel-polyfill", "./src/index.js"],
   output: {
     path: path.resolve(__dirname, "build"),
     filename: "app-[hash].bundle.js"
@@ -37,7 +37,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: "babel-loader",
         options: {
-          presets: ["es2015", "react"]
+          presets: ["es2015", "react", "stage-0"]
         }
       },
       {

@@ -2,12 +2,13 @@ import React from "react";
 import { render } from "react-dom";
 import App from "./App";
 import registerServiceWorker from "./registerServiceWorker";
-import { BrowserRouter as Router } from "react-router-dom";
+import { Router } from "react-router-dom";
 import {Provider} from "react-redux";
 import { createStore, compose, applyMiddleware } from "redux";
 import ReduxPromise from "redux-promise";
 import ReduxThunk from "redux-thunk";
 import reducers from "./rootReducer";
+import { createBrowserHistory } from "history";
 
 const store = createStore(
   reducers,
@@ -17,7 +18,7 @@ const store = createStore(
 
 const app = (
   <Provider store={store}>
-    <Router>
+    <Router history={createBrowserHistory()}>
       <App />
     </Router>
   </Provider>

@@ -1,2 +1,3 @@
 export const LIST_USER_STORIES  = 'LISTUSER_STORIES';
-export const ADD_USER_STORY  = 'ADDUSER_STORY';
+export const ADD_USER_STORY  = 'ADD_USER_STORY';
+export const DETAILS_USER_STORY  = 'DETAILS_USER_STORY';

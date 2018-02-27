@@ -1,6 +1,6 @@
-const dashboardInitialState = {
-    userStories: [],
-    userStory: {},
+const userStoriesInitialState = {
+  userStories: [],
+  userStory: {}
 };
 
-export default dashboardInitialState;
+export default userStoriesInitialState;

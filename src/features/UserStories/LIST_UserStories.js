@@ -12,15 +12,20 @@ import {
   Menu,
   List,
   Spin,
-  Dropdown
+  Dropdown,
+  Divider
 } from "antd";
 import { listProjects } from "../../features/dashboard/actions/dashboardActions";
-
+const { confirm } = Modal;
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link, Route, withRouter } from "react-router-dom";
 import { PageHeader } from "../../components/PageHeader";
-import { addUserStories, listUserStories } from "./actions/userStoriesActions";
+import {
+  addUserStory,
+  deleteUserStory,
+  listUserStories
+} from "./actions/userStoriesActions";
 const FormItem = Form.Item;
 const { Meta } = Card;
 const { TextArea } = Input;
@@ -28,7 +33,7 @@ const { TextArea } = Input;
 class LIST_Projects extends Component {
   state = {
     addUserStoryPickerVisible: false,
-    addSubTasksPickerVisible: false,
+    deleteUserStoryPickerVisible: false,
     form: {
       title: "",
       description: "",
@@ -61,11 +66,20 @@ class LIST_Projects extends Component {
   };
 
   addUserStory = () => {
-    const { listUserStories, addUserStories } = this.props;
+    const { listUserStories,  addUserStory } = this.props;
     const { form: newUserStory } = this.state;
 
-    addUserStories(newUserStory).then(response => {
+     addUserStory(newUserStory).then(response => {
       this.hideAddUserStoryPicker();
+      listUserStories();
+    });
+  };
+  deleteUserStory = () => {
+    const { listUserStories, deleteUserStory } = this.props;
+    const { currentUserStory } = this.state;
+
+    deleteUserStory(currentUserStory._id).then(response => {
+      this.hideDeleteUserStoryPicker();
       listUserStories();
     });
   };
@@ -90,33 +104,27 @@ class LIST_Projects extends Component {
           <List
             dataSource={userStories}
             renderItem={userStory => (
-              <Link to={`/user-story/${userStory._id}`}>
+              <div>
                 <List.Item key={userStory._id}>
                   <List.Item.Meta
                     avatar={<Avatar>{userStory.points}</Avatar>}
                     title={userStory.title}
                     description={userStory.description}
                   />
-                  <div>
-                    <Dropdown
-                      overlay={
-                        <Menu onClick={this.getCurrentUserStory(userStory)}>
-                          <Menu.Item key="1">Supprimer</Menu.Item>
-                          <Menu.Item key="2">Modifier</Menu.Item>
-                        </Menu>
-                      }
-                    >
-                      <Button>
-                        Actions <Icon type="down" />
-                      </Button>
-                    </Dropdown>
-                  </div>
+                  <Button onClick={this.showDeleteUserStoryPicker(userStory)}>
+                    <Icon type="delete" /> Supprimer
+                  </Button>
+                  <Button >
+                    <Icon type="eye" /> Details
+                  </Button>
                 </List.Item>
-              </Link>
+                <Divider />
+              </div>
             )}
           >
             {!userStories && <Spin className="demo-loading" />}
           </List>
+          {this.renderDeleteUserStoryPicker()}
         </div>
         {this.renderAddUserStoryPicker()}
       </div>
@@ -180,6 +188,33 @@ class LIST_Projects extends Component {
       addUserStoryPickerVisible: false
     });
   };
+
+  renderDeleteUserStoryPicker() {
+    const { deleteUserStoryPickerVisible } = this.state;
+    return (
+      <Modal
+        title="Supprimer une user-story"
+        visible={deleteUserStoryPickerVisible}
+        onOk={this.deleteUserStory}
+        onCancel={this.hideDeleteUserStoryPicker}
+      >
+        <p>Êtes-vous sûr de vouloir supprimer cette tâche ?</p>
+      </Modal>
+    );
+  }
+
+  showDeleteUserStoryPicker = currentUserstory => () => {
+    this.setState({
+      deleteUserStoryPickerVisible: true,
+      currentUserStory: currentUserstory
+    });
+  };
+
+  hideDeleteUserStoryPicker = () => {
+    this.setState({
+      deleteUserStoryPickerVisible: false
+    });
+  };
 }
 
 function mapStateToProps(state) {
@@ -189,7 +224,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ listUserStories, addUserStories }, dispatch);
+  return bindActionCreators({ listUserStories, deleteUserStory, addUserStory }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LIST_Projects);

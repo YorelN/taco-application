@@ -18,7 +18,7 @@ export function listUserStories() {
   };
 }
 
-export function addUserStories(newUserStory) {
+export function addUserStory(newUserStory) {
   return async function(dispatch) {
     const URL = `/api/boards/${1}/tasks`;
 
@@ -37,6 +37,21 @@ export function detailsUserStory(taskId) {
         const URL = `/api/boards/${1}/tasks/${taskId}`;
 
         const { data: detailedTask, status } = await axios.get(URL);
+        dispatch({
+            type: DETAILS_USER_STORY,
+            payload: detailedTask
+        });
+
+        return status;
+    };
+}
+
+
+export function deleteUserStory(taskId) {
+    return async function(dispatch) {
+        const URL = `/api/boards/${1}/tasks/${taskId}`;
+
+        const { data: detailedTask, status } = await axios.delete(URL);
         dispatch({
             type: DETAILS_USER_STORY,
             payload: detailedTask

@@ -9,11 +9,14 @@ import userStoriesInitialState from "./initialState";
 export default function(state = userStoriesInitialState, action = {}) {
   switch (action.type) {
     case LIST_USER_STORIES:
-      const tasks = action.payload;
-      return Object.assign({}, state, {
-        userStories: tasks
-      });
+      const response = action.payload;
+      const boards = action.payload["boards"];
 
+      if (response && boards && boards["1"]) {
+        return Object.assign({}, state, {
+          userStories: boards["1"].tasks
+        });
+      }
     case ADD_USER_STORY:
       const newTask = action.payload;
       return Object.assign({}, state, {

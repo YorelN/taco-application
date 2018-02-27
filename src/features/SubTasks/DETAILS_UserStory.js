@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { listSubTasks, addSubTask } from "../SubTasks/actions/subTasksActions";
 import { PageHeader } from "../../components/PageHeader";
-import { Icon, Button, Modal, Form, Input, List } from "antd";
+import { Icon, Button, Modal, Form, Input, List, Spin } from "antd";
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
@@ -50,12 +50,10 @@ class DETAILS_UserStory extends Component {
     const { addSubTask, listSubTasks, match } = this.props;
     const { userStoryId } = match.params;
     const { form: newSubTasks } = this.state;
-    const { status } = addSubTask(userStoryId, newSubTasks);
-
-    if (status === 200) {
+    addSubTask(userStoryId, newSubTasks).then(response => {
       listSubTasks(userStoryId);
       this.hideAddSubtasksPicker();
-    }
+    });
   };
 
   renderAddSubtasksPicker() {
@@ -95,27 +93,9 @@ class DETAILS_UserStory extends Component {
       </Modal>
     );
   }
-  renderDeleteUserStoryPicker() {
-    const {
-      deleteUserStoryPickerVisible,
-      currentUserStory: userStory
-    } = this.state;
-    return (
-      <Modal
-        title="Supprimer une sous-tâche"
-        visible={deleteUserStoryPickerVisible}
-        onOk={this.deleteUserStory}
-        onCancel={this.hideDeleteUserStoryPicker}
-      >
-        <p>
-          Êtes-vous sûr de vouloir supprimer la sous-tâche{" "}
-          <span style={{ fontWeight: 800 }}>{userStory.title}</span> ?{" "}
-        </p>
-      </Modal>
-    );
-  }
   render() {
     const { subTasks } = this.props;
+    if (!subTasks) return <Spin className="demo-loading" />;
     return (
       <div>
         <PageHeader
@@ -161,14 +141,11 @@ class DETAILS_UserStory extends Component {
                 description={subTask.description}
               />
               <div>
-                <div >
+                <div>
                   <Button>
-                    <Icon type="eye" style={{color: '#5726FB'}}/>
-                  </Button>{' '}
-                  <Button >
-                    <Icon type="edit" style={{color: '#fba672'}}/>
-                  </Button>{' '}
-                  <Button style={{color: 'red'}}>
+                    <Icon type="edit" style={{ color: "#fba672" }} />
+                  </Button>{" "}
+                  <Button style={{ color: "red" }}>
                     <Icon type="delete" />
                   </Button>
                 </div>
@@ -182,10 +159,13 @@ class DETAILS_UserStory extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    subTasks: state.subTask.subTasks
-  };
+function mapStateToProps(state, ownProps) {
+  const taskId = ownProps.match.params.userStoryId;
+  if (state.subTask.subTasks[taskId]) {
+    return {
+      subTasks: state.subTask.subTasks[taskId].subtasks,
+    };
+  }
 }
 
 function mapDispatchToProps(dispatch) {

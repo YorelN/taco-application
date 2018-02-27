@@ -16,9 +16,10 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { PageHeader } from "../../components/PageHeader";
 import {
-    addUserStory,
-    deleteUserStory,
-    listUserStories, updateUserStory
+  addUserStory,
+  deleteUserStory,
+  listUserStories,
+  updateUserStory
 } from "./actions/userStoriesActions";
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -71,15 +72,6 @@ class LIST_Projects extends Component {
       listUserStories();
     });
   };
-  deleteUserStory = () => {
-    const { listUserStories, deleteUserStory } = this.props;
-    const { currentUserStory } = this.state;
-
-    deleteUserStory(currentUserStory._id).then(response => {
-      this.hideDeleteUserStoryPicker();
-      listUserStories();
-    });
-  };
 
   updateUserStory = () => {
     const { listUserStories, updateUserStory } = this.props;
@@ -103,7 +95,7 @@ class LIST_Projects extends Component {
   setEditMode = userStoryId => () => {
     axios.get(`/api/boards/1/tasks/${userStoryId}`).then(({ data }) => {
       this.setState({
-        form: data,
+        form: data.boards["1"].tasks[0],
         updateUserStoryPickerVisible: true
       });
     });
@@ -112,7 +104,6 @@ class LIST_Projects extends Component {
   render() {
     const { userStories } = this.props;
 
-    console.log(this.state.form._id);
     if (!userStories) return <Spin className="demo-loading" />;
 
     return (

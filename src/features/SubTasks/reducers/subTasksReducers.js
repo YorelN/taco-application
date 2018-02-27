@@ -9,7 +9,7 @@ export default function(state = userStoriesInitialState, action = {}) {
 
       if (subTasks && subTasks["boards"] && subTasks["boards"]["1"]) {
         return Object.assign({}, state, {
-          subTasks:  subTasks["boards"]["1"].tasks
+          subTasks: subTasks["boards"]["1"].tasks
         });
       }
 

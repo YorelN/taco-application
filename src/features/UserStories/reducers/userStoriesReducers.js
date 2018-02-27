@@ -20,7 +20,7 @@ export default function(state = userStoriesInitialState, action = {}) {
     case ADD_USER_STORY:
       const newTask = action.payload;
       return Object.assign({}, state, {
-        userStory: newTask
+        userStory: newTask,
       });
 
     case DETAILS_USER_STORY:
